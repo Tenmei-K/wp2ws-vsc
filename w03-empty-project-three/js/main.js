@@ -17,7 +17,7 @@ function updateThree() {
 
 function getBox() {
     // create the thing
-    const geometry = new THREE.BoxGeometry(1, 1, 1); // decide the shape
+    const geometry = new THREE.BoxGeometry(1, 1, 1); // decide the shape - skeleton
     /**
     const material = new THREE.MeshBasicMaterial({ // check the three.js library
         color: 0xffff00,
@@ -27,7 +27,7 @@ function getBox() {
         opacit: 0.5
     }); // decide the skin
     */
-    const material = new THREE.MeshNormalMaterial()
+    const material = new THREE.MeshNormalMaterial() // decide the surface: image, reflective, roughness
     const mesh = new THREE.Mesh(geometry, material);
     return(mesh);
     // append to the scene in setupThree()

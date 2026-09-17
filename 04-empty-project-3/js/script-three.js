@@ -35,7 +35,7 @@ function initThree() {
     readonly: true,
     view: 'graph',
     min: 0,
-    max: 120,
+    max: 240,
   });
   pane.addBlade({ view: 'separator' });
 
