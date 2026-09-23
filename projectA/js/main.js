@@ -8,10 +8,12 @@ let params = {
 const WORLD_SIZE = 2000;
 const WORLD_HALF = WORLD_SIZE / 2;
 
-let cubes = [];
+// let ring;
+let rings = [];
 
 function setupThree() {
   scene.add(axesHelper)
+  scene.background = new THREE.Color('#d2b2b2');
 
   // GUI
   pane.addBinding(params, "numOfParticles", {
@@ -19,9 +21,30 @@ function setupThree() {
   });
 
   // add your code here
+
+  // ring = new Ring();
+  // ring.pos.x = random(-WORLD_HALF, WORLD_HALF);
+  // ring.pos.y = random(-WORLD_HALF, WORLD_HALF);
+  // ring.pos.z = random(-WORLD_HALF, WORLD_HALF);
+  rings.push(new Ring());
+
 }
 
 function updateThree() {
+
+  for (let ring of rings) {
+    // ring.updatePosition();
+    ring.updateRotation();
+    ring.grow();
+    // ring.updateLifespan();
+    // ring.updateScale();
+    // ring.updateColor();
+    // ring.reappear();
+    // or, cube.update(); // if you want to update all properties
+  }
+
+
+
   /*
   // generate
   let cube = new Cube();
@@ -53,7 +76,7 @@ function updateThree() {
   */
 
   // update the value(s) in the GUI
-  params.numOfParticles = cubes.length;
+  params.numOfParticles = rings.length;
 }
 
 function getBox() {
@@ -73,9 +96,9 @@ function getCylinder() {
 }
 
 function getRing() {
-  const geometry = new THREE.RingGeometry(1, 1, 8, 1, 0, 0); // innerRadius, outerRadius, thetaSegments, phiSegments, thetaStart, thetaLength
+  const geometry = new THREE.RingGeometry(1, 3, 8, 1, 0, 0.3); // innerRadius, outerRadius, thetaSegments, phiSegments, thetaStart, thetaLength
   const material = new THREE.MeshBasicMaterial({
-    color: 0xffff00,
+    color: "#ffffff",
     side: THREE.DoubleSide
   });
   const mesh = new THREE.Mesh(geometry, material);
@@ -291,6 +314,8 @@ class Ring {
     this.mesh = getRing();
     scene.add(this.mesh);
 
+    // this.mesh.geometry.parameters.thetaLength = 1;
+
     // position
     this.pos = this.mesh.position; // reference to the mesh position
     this.vel = new THREE.Vector3(random(-1, 1), random(-1, 1), random(-1, 1));
@@ -298,18 +323,23 @@ class Ring {
 
     // rotation
     this.rot = this.mesh.rotation; // reference to the mesh rotation
-    this.rotVel = new THREE.Vector3(
-      random(-0.05, 0.05),
-      random(-0.05, 0.05),
-      random(-0.05, 0.05)
-    );
+    this.rot.set(PI / 2, 0, PI / 2); // x & z = PI / 2 保证处于平面，调整y以形成左右高低摆动效果
+    this.rotVel = new THREE.Vector3(0, 0, 0);
     this.rotAcc = new THREE.Vector3();
 
     // scale
     this.scale = this.mesh.scale; // reference to the mesh scale
-    let size = random(5, 20);
+    let size = random(15, 20);
     this.baseScale = new THREE.Vector3(size, size, size);
     this.scale.copy(this.baseScale);
+
+    // geometry.parameters
+    this.innerRadius = this.mesh.geometry.parameters.innerRadius;
+    this.outerRadius = this.mesh.geometry.parameters.outerRadius;
+    this.thetaSegments = this.mesh.geometry.parameters.thetaSegments;
+    this.phiSegments = this.mesh.geometry.parameters.phiSegments;
+    this.thetaLength = this.mesh.geometry.parameters.thetaLength;
+    console.log(this.mesh.geometry.parameters.thetaLength);
 
     // mass
     this.mass = 1;
@@ -322,6 +352,18 @@ class Ring {
     this.lifespan = 1; // 100%
     this.lifeReduction = random(0.001, 0.01);
     this.isDone = false;
+  }
+
+  grow() {
+    if (this.mesh.geometry.parameters.thetaLength <= PI * 2) {
+      this.mesh.geometry.parameters.thetaLength += 0.01;
+    } else {
+      this.mesh.geometry.parameters.thetaLength = PI * 2;
+    }
+    // console.log(this.mesh.geometry.parameters.thetaLength);
+    // if (this.thetaLength >= PI / 2) {
+    //   this.thetaLength = PI / 2;
+    // }
   }
 
   setPosition(x, y, z) {
