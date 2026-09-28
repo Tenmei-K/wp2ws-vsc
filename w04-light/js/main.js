@@ -3,63 +3,100 @@ const axesHelper = new THREE.AxesHelper(1000)
 let params = {
   fps: 0,
   numOfParticles: 0,
+  fogDensity: 0.001,
 };
 
 const WORLD_SIZE = 2000;
 const WORLD_HALF = WORLD_SIZE / 2;
 
-let cubes = [];
+let light;
 
 function setupThree() {
-  // scene.add(axesHelper)
-  // scene.background = new THREE.Color('#d2b2b2');
-  
-  // GUI
-  pane.addBinding(params, "numOfParticles", {
-    step: 1,
-  });
+  scene.add(axesHelper);
+  scene.background = new THREE.Color('#000000');
 
-  // add your code here
+  // GUI
+  pane.addBinding(params, "fogDensity", {
+    min: 0.0001,
+    max: 0.001,
+    step: 0.0001,
+  })
+
+  // light
+  // const ambiLight = new THREE.AmbientLight("#ffffff");
+  // scene.add(ambiLight);
+  const hemiLight = new THREE.HemisphereLight("#1caefd", "#6428ef", 1);
+  // const helper = new THREE.HemisphereLightHelper(light, 5);
+  scene.add(hemiLight);
+
+  // point light
+  light = new THREE.PointLight("#ffffff", 1, 800, 0.1);
+  light.position.set(0, 200, 0);
+  scene.add(light);
+  let sphere = getSphere();
+  sphere.scale.set(10, 10, 10);
+  light.add(sphere);
+
+
+  // fog
+  // scene.fog = new THREE.Fog('#000000', 0.002, WORLD_SIZE );
+  scene.fog = new THREE.FogExp2('#000000', params.fogDensity);
+
+  // floor
+  let floor = getPlane();
+  floor.scale.x = WORLD_SIZE;
+  floor.scale.y = WORLD_SIZE;
+  floor.rotation.x = - PI / 2;
+  floor.position.y = - 200;
+  scene.add(floor);
+
+  // boxes
+  let gap = 150;
+  for (let x = -WORLD_HALF; x <= WORLD_HALF; x += gap) {
+    for (let z = -WORLD_HALF; z <= WORLD_HALF; z += gap) {
+      let cube = getBox();
+      cube.position.set(x, -200, z);
+
+      cube.geometry.translate(0, 0.50, 0);
+      cube.scale.set(60, random(60, 300), 60);
+      scene.add(cube)
+    }
+  }
 }
 
 function updateThree() {
-  // generate
-  let cube = new Cube();
-  // random position
-  // cube.pos.x = random(-WORLD_HALF, WORLD_HALF);
-  // cube.pos.y = random(-WORLD_HALF, WORLD_HALF);
-  // cube.pos.z = random(-WORLD_HALF, WORLD_HALF);
-  cubes.push(cube);
+  scene.fog.density = params.fogDensity;
 
-  // update
-  for (let cube of cubes) {
-    cube.updatePosition();
-    cube.updateRotation();
-    cube.updateLifespan();
-    cube.updateScale();
-    cube.updateColor();
-    cube.reappear();
-    // or, cube.update(); // if you want to update all properties
-  }
+  light.position.x = cos(frame * 0.02) * 300;
+  light.position.z = sin(frame * 0.02) * 300;
 
-  // remove cubes that are done
-  for (let i = cubes.length - 1; i >= 0; i--) {
-    let cube = cubes[i];
-    if (cube.isDone) {
-      scene.remove(cube.mesh);
-      cubes.splice(i, 1);
-    }
-  }
-
-  // update the value(s) in the GUI
-  params.numOfParticles = cubes.length;
 }
 
 function getBox() {
   const geometry = new THREE.BoxGeometry(1, 1, 1);
+  // const material = new THREE.MeshBasicMaterial({
+  //   color: 0xffffff,
+  // });
+  // const material = new THREE.MeshNormalMaterial();
+  const material = new THREE.MeshPhongMaterial();
+  const mesh = new THREE.Mesh(geometry, material);
+  return mesh;
+}
+
+function getPlane() {
+  const geometry = new THREE.PlaneGeometry(1, 1, 10, 10);
   const material = new THREE.MeshBasicMaterial({
-    color: 0xffffff,
+    color: "#1a3d4d",
+    side: THREE.DoubleSide,
+    // wireframe: true,
   });
+  const mesh = new THREE.Mesh(geometry, material);
+  return mesh;
+}
+
+function getSphere() {
+  const geometry = new THREE.SphereGeometry(1, 32, 16);
+  const material = new THREE.MeshBasicMaterial({ color: "#ffffff" });
   const mesh = new THREE.Mesh(geometry, material);
   return mesh;
 }
