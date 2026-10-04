@@ -10,6 +10,8 @@ const WORLD_HALF = WORLD_SIZE / 2;
 
 // let ring;
 let rings = [];
+let ringPositions = [];
+let ringThetaLengths = [];
 
 function setupThree() {
   scene.add(axesHelper)
@@ -26,16 +28,34 @@ function setupThree() {
   // ring.pos.x = random(-WORLD_HALF, WORLD_HALF);
   // ring.pos.y = random(-WORLD_HALF, WORLD_HALF);
   // ring.pos.z = random(-WORLD_HALF, WORLD_HALF);
-  rings.push(new Ring());
 
+  ringPositions.push(new THREE.Vector3(0, 0, 0));
+  ringThetaLengths.push(0);
+  // rings.push(new Ring());
+  for (let i = 0; i < ringThetaLengths.length; i++) {
+    // rings.push(new Ring());
+  }
 }
 
 function updateThree() {
 
-  for (let ring of rings) {
+  for (let i = 0; i < ringThetaLengths.length; i++) {
+    for (let j = ringThetaLengths.length - 1; j >= 0; j--) {
+      if (ringThetaLengths[j] >= PI * 2) {
+        console.log("spliced")
+        rings.splice(j, 1)
+        ringThetaLengths.splice(j, 1)
+      }
+    }
+    if (ringThetaLengths.length > 0) {
+      rings.push(new Ring(ringThetaLengths[i]));
+      ringThetaLengths[i] += 0.01;
+      rings.splice(i, 1)
+    }
+
+    // rings[i].updateRotation();
+    // rings[i].grow();
     // ring.updatePosition();
-    ring.updateRotation();
-    ring.grow();
     // ring.updateLifespan();
     // ring.updateScale();
     // ring.updateColor();
@@ -95,8 +115,8 @@ function getCylinder() {
   return mesh;
 }
 
-function getRing() {
-  const geometry = new THREE.RingGeometry(1, 3, 8, 1, 0, 0.3); // innerRadius, outerRadius, thetaSegments, phiSegments, thetaStart, thetaLength
+function getRing(thetaLength) {
+  const geometry = new THREE.RingGeometry(1, 3, 8, 1, 0, thetaLength); // innerRadius, outerRadius, thetaSegments, phiSegments, thetaStart, thetaLength
   const material = new THREE.MeshBasicMaterial({
     color: "#ffffff",
     side: THREE.DoubleSide
@@ -309,9 +329,10 @@ class Cube {
 }
 
 class Ring {
-  constructor() {
+  constructor(thetaLength) {
     // mesh
-    this.mesh = getRing();
+    this.mesh = getRing(thetaLength);
+    // console.log(thetaLength)
     scene.add(this.mesh);
 
     // this.mesh.geometry.parameters.thetaLength = 1;
@@ -339,7 +360,7 @@ class Ring {
     this.thetaSegments = this.mesh.geometry.parameters.thetaSegments;
     this.phiSegments = this.mesh.geometry.parameters.phiSegments;
     this.thetaLength = this.mesh.geometry.parameters.thetaLength;
-    console.log(this.mesh.geometry.parameters.thetaLength);
+    // console.log(this.mesh.geometry.parameters.thetaLength);
 
     // mass
     this.mass = 1;
