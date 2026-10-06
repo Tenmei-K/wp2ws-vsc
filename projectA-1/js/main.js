@@ -29,14 +29,6 @@ function setupThree() {
   // ring.pos.y = random(-WORLD_HALF, WORLD_HALF);
   // ring.pos.z = random(-WORLD_HALF, WORLD_HALF);
 
-  ringPositions.push(new THREE.Vector3(random(-WORLD_HALF, WORLD_HALF), random(-WORLD_HALF, WORLD_HALF), random(-WORLD_HALF, WORLD_HALF)));
-  ringThetaLengths.push(0);
-  rings.push([]);
-  // rings.push(new Ring());
-  for (let i = 0; i < ringThetaLengths.length; i++) {
-    // rings.push(new Ring());
-  }
-
   ringThetaLengths.push(0);
   ringPositions.push(new THREE.Vector3(random(-WORLD_HALF, WORLD_HALF), random(-WORLD_HALF, WORLD_HALF), random(-WORLD_HALF, WORLD_HALF)));
   rings.push([]);
@@ -52,41 +44,49 @@ function updateThree() {
       rings.push([]);
     }
   }
-    */
+  */
 
+  // splice 所以用j
   for (let j = ringThetaLengths.length - 1; j >= 0; j--) {
     if (ringThetaLengths[j] >= PI * 2) {
       console.log("spliced")
       // rings[j].geometry.dispose();
       // rings[j].material.dispose();
       for (let i = 0; i < rings[j].length; i++) {
-        scene.remove(rings[j][i]);
+        console.log(rings[j]);
+        console.log("final mesh removed");
+        scene.remove(rings[j][i].mesh);
       }
       rings.splice(j, 1)
       ringThetaLengths.splice(j, 1)
     }
   }
 
+  // push/create
   for (let i = 0; i < ringThetaLengths.length; i++) {
 
     if (ringThetaLengths.length > 0 && ringThetaLengths[i] < PI * 2) {
-      let ring = new Ring(ringThetaLengths[i])
+      let ring = new Ring(ringThetaLengths[i]);
       rings[i].push(ring);
-      ring.pos.x = ringPositions[i].x
-      ring.pos.y = ringPositions[i].y
-      ring.pos.z = ringPositions[i].z
+      ring.pos.x = ringPositions[i].x;
+      ring.pos.y = ringPositions[i].y;
+      ring.pos.z = ringPositions[i].z;
 
-      ringThetaLengths[i] += 0.01;
+      ringThetaLengths[i] += 0.005;
 
-      scene.remove(ring);
-      if (ring.geometry) {
-        ring.geometry.dispose();
-      }
-      if (ring.material) {
-        ring.material.dispose();
-      }
+      // if (rings[i].length > 1) {
+      //   console.log("removing")
+      //   scene.remove(rings[i][0].mesh);
+      //   if (ring.geometry) {
+      //     ring.geometry.dispose();
+      //   }
+      //   if (ring.material) {
+      //     ring.material.dispose();
+      //   }
+      // }
 
-      rings[i].splice(0, 1)
+
+      // rings[i].splice(0, 1)
     }
 
     // rings[i].updateRotation();
