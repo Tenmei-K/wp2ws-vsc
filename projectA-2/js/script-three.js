@@ -19,6 +19,7 @@ function initThree() {
 
   renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.shadowMap.enabled = true; // 1!!
 
   container = document.getElementById("container-three");
   container.appendChild(renderer.domElement);

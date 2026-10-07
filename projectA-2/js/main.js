@@ -2,12 +2,22 @@ const axesHelper = new THREE.AxesHelper(1000)
 
 let params = {
   fps: 0,
+  // Ring
   maxRings: 25,
   speed: 0.05,
   maxSize: 25,
   minSize: 10,
-
+  // Cylinder
   maxHeight: 50,
+  // Light
+  x: 0,
+  y: 3500,
+  z: 0,
+  intensity: 1,
+  distance: 5000,
+  angle: Math.PI / 6,
+  penumbra: 0,
+  decay: 0,
 };
 
 const WORLD_SIZE = 2000;
@@ -28,25 +38,46 @@ let ringSizes = [];
 let cylinders = [];
 let cylinderHeights = [];
 
+let light;
+
 
 function setupThree() {
   // scene.add(axesHelper);
-  scene.background = new THREE.Color('#1d0303');
+  scene.background = new THREE.Color('#a2f3e8');
 
   // FLOOR
-  plane = getPlane(WORLD_HALF * 2 + 200, WORLD_HALF * 2 + 200);
+  plane = getPlane(WORLD_HALF * 2 + 1000, WORLD_HALF * 2 + 1000);
   plane.position.y = FLOOR_POSITION;
   plane.rotation.x = PI / 2;
   scene.add(plane);
 
   // LIGHTS
-  // const ambiLight = new THREE.AmbientLight("#ffffff");
-  // ambiLight.castShadow = true; // 2 !!
-  // scene.add(ambiLight);
-
-  const hemiLight = new THREE.HemisphereLight(0x000099, 0x330000, 1); //skyColor, groundColor, intensity
-  hemiLight.castShadow = true; // 2 !!
+  // 大全环境光
+  const ambiLight = new THREE.AmbientLight("#00eeff");
+  scene.add(ambiLight);
+  // 柔和环境光
+  const hemiLight = new THREE.HemisphereLight("#ffffff", "#c8ffb1", 0.5); //skyColor, groundColor, intensity
   scene.add(hemiLight);
+
+  light = getSpotLight();
+  light.position.x = params.x;
+  light.position.y = params.y;
+  light.position.z = params.z;
+  light.rotation.y = PI / 2;
+  light.intensity = params.intensity;
+  light.distance = params.distance;
+  light.angle = params.angle;
+  light.penumbra = params.penumbra;
+  light.decay = params.decay;
+  scene.add(light);
+
+  let lightMesh = getSphere();
+  lightMesh.scale.set(20, 20, 20);
+  // light.add(lightMesh); // !!!
+
+  spotLightHelper = new THREE.SpotLightHelper(light);
+  // scene.add(spotLightHelper);
+
 
   // GUI
   let folderRing = pane.addFolder({ title: "Ring", expanded: true });
@@ -54,8 +85,16 @@ function setupThree() {
   folderRing.addBinding(params, "speed", { min: 0.02, max: 0.09, step: 0.001, });
   folderRing.addBinding(params, "maxSize", { min: 15, max: 25, step: 1, });
   folderRing.addBinding(params, "minSize", { min: 5, max: 15, step: 1, });
+
   let folderCylinder = pane.addFolder({ title: "Cylinder", expanded: true });
-  folderCylinder.addBinding(params, "maxHeight", { min: 1, max: 50, step: 1 })
+  folderCylinder.addBinding(params, "maxHeight", { min: 1, max: 50, step: 1 });
+
+  let folderLight = pane.addFolder({ title: "Light", expanded: true });
+  folderLight.addBinding(params, "intensity", { min: 0, max: 1, step: 0.01 });
+  folderLight.addBinding(params, "distance", { min: 1, max: 3000, step: 1 });
+  folderLight.addBinding(params, "angle", { min: 0, max: PI, step: 0.001 });
+  folderLight.addBinding(params, "penumbra", { min: 0, max: 1, step: 0.01 });
+  folderLight.addBinding(params, "decay", { min: 0, max: 1, step: 0.0001 });
 
 
 }
@@ -190,12 +229,24 @@ function updateThree() {
 }
 
 ///// LIGHT /////
+function getSpotLight() {
+  const spotLight = new THREE.SpotLight("#ffff00");
+  spotLight.castShadow = true;
+  return spotLight;
+}
+
+function getPointLight() {
+  const light = new THREE.PointLight("#ffffff", 1, 1000, 0); // color, intensity, distance, decay
+  return light
+}
+
 function getPlane(w, h) {
   const geometry = new THREE.PlaneGeometry(w, h, 32);
   const material = new THREE.MeshPhongMaterial({
     side: THREE.DoubleSide
   });
   const mesh = new THREE.Mesh(geometry, material);
+  mesh.receiveShadow = true;
   return mesh;
 }
 
@@ -222,6 +273,8 @@ function getRing(innerRadius, thetaStart, thetaLength) {
     // receiveShadow: true,
   });
   const mesh = new THREE.Mesh(geometry, material);
+  mesh.castShadow = true;
+  // mesh.receiveShadow = true;
   return mesh;
 }
 
