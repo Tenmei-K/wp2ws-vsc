@@ -26,7 +26,7 @@ let cylinderHeights = [];
 
 
 function setupThree() {
-  scene.add(axesHelper);
+  // scene.add(axesHelper);
   scene.background = new THREE.Color('#1d0303');
 
   // GUI
@@ -50,7 +50,7 @@ function updateThree() {
       ringInnerRadiuses.push(3);
       ringThetaLengths.push(0);
       ringSizes.push(random(params.minSize, params.maxSize))
-      ringPositions.push(new THREE.Vector3(random(-WORLD_HALF, WORLD_HALF), random(-WORLD_HALF / 2, WORLD_SIZE - WORLD_HALF / 2), random(-WORLD_HALF, WORLD_HALF)));
+      ringPositions.push(new THREE.Vector3(random(-WORLD_HALF, WORLD_HALF), random(-WORLD_HALF, WORLD_HALF), random(-WORLD_HALF, WORLD_HALF)));
       rings.push([]);
 
       cylinderHeights.push(0);
@@ -61,7 +61,7 @@ function updateThree() {
 
   // splice 所以用j
   for (let j = ringThetaLengths.length - 1; j >= 0; j--) {
-    if (ringThetaLengths[j] >= PI * 2) {
+    if (ringThetaLengths[j] >= PI * 1.99) {
       // rings[j].geometry.dispose();
       // rings[j].material.dispose();
       scene.remove(rings[j][0].mesh);
@@ -86,6 +86,7 @@ function updateThree() {
         cylinders[j][0].material.dispose();
       }
       cylinderHeights.splice(j, 1);
+      cylinders.splice(j, 1);
     }
   }
 
