@@ -3,7 +3,7 @@ const axesHelper = new THREE.AxesHelper(1000)
 let params = {
   fps: 0,
   // Ring
-  maxRings: 25,
+  maxRings: 30,
   speed: 0.05,
   maxSize: 25,
   minSize: 10,
@@ -15,11 +15,11 @@ let params = {
   z: 0,
   intensity: 1,
   distance: 5000,
-  angle: Math.PI / 6,
-  penumbra: 0,
+  angle: 0.390,
+  penumbra: 0.34,
   decay: 0,
   // Fog
-  fogDensity: 0,
+  fogDensity: 0.00015,
 };
 
 const WORLD_SIZE = 2000;
@@ -66,10 +66,8 @@ function setupThree() {
   light.position.y = params.y;
   light.position.z = params.z;
   light.rotation.y = PI / 2;
-  light.intensity = params.intensity;
+
   light.distance = params.distance;
-  light.angle = params.angle;
-  light.penumbra = params.penumbra;
   light.decay = params.decay;
   scene.add(light);
 
@@ -80,11 +78,8 @@ function setupThree() {
   spotLightHelper = new THREE.SpotLightHelper(light);
   // scene.add(spotLightHelper);
 
-
   // FOG
   scene.fog = new THREE.FogExp2("#00eeff", params.fogDensity);
-
-
 
   // GUI
   let folderRing = pane.addFolder({ title: "Ring", expanded: true });
@@ -97,25 +92,36 @@ function setupThree() {
   folderCylinder.addBinding(params, "maxHeight", { min: 1, max: 50, step: 1 });
 
   let folderLight = pane.addFolder({ title: "Light", expanded: true });
-  folderLight.addBinding(params, "intensity", { min: 0, max: 1, step: 0.01 });
-  folderLight.addBinding(params, "distance", { min: 1, max: 3000, step: 1 });
-  folderLight.addBinding(params, "angle", { min: 0, max: PI, step: 0.001 });
-  folderLight.addBinding(params, "penumbra", { min: 0, max: 1, step: 0.01 });
-  folderLight.addBinding(params, "decay", { min: 0, max: 1, step: 0.0001 });
-
-  let folderFog = pane.addFolder({ title: "Fog", expanded: true });
-  folderFog.addBinding(params, "fogDensity", {
+  folderLight.addBinding(params, "intensity", {
     min: 0,
     max: 1,
     step: 0.01
   }).on("change", () => {
-    fog.density.set(params.fogDensity);
+    light.intensity = params.intensity;
+  });
+  folderLight.addBinding(params, "angle", {
+    min: 0, max: PI / 6, step: 0.001
+  }).on("change", () => {
+    light.angle = params.angle;
+  });
+  folderLight.addBinding(params, "penumbra", {
+    min: 0, max: 1, step: 0.01
+  }).on("change", () => {
+    light.penumbra = params.penumbra;
+  });
+
+  let folderFog = pane.addFolder({ title: "Fog", expanded: true });
+  folderFog.addBinding(params, "fogDensity", {
+    min: 0,
+    max: 0.001,
+    step: 0.00001,
+  }).on("change", () => {
+    scene.fog.density = params.fogDensity;
   });
 
 }
 
 function updateThree() {
-
 
   if (frame % Math.floor(100 / params.maxRings) == 0) {
     if (ringThetaLengths.length < params.maxRings) {
@@ -294,6 +300,40 @@ function getRing(innerRadius, thetaStart, thetaLength) {
   // mesh.receiveShadow = true;
   return mesh;
 }
+
+/* from Prof. Moon
+function getRing(innerRadius, thetaStart, thetaLength) {
+  const geometry = new THREE.RingGeometry(
+    innerRadius,
+    3,
+    Math.floor(thetaLength / (2 * PI) * 8) + 1,
+    1,
+    thetaStart,
+    thetaLength
+  );
+
+  const material = new THREE.MeshBasicMaterial({
+    color: "#ffffff",
+    side: THREE.DoubleSide,
+    wireframe: false,
+    transparent: true,
+    opacity: 0.5,
+  });
+  const mesh = new THREE.Mesh(geometry, material);
+
+  // create edges from the ring geometry!
+  const edges = new THREE.EdgesGeometry(geometry);
+  const lineMaterial = new THREE.LineBasicMaterial({
+    color: "#00FF00",
+  });
+  const line = new THREE.LineSegments(edges, lineMaterial);
+
+  // add the edges to the mesh so that it can be combined with the ring geometry!
+  mesh.add(line);
+
+  return mesh;
+}
+*/
 
 
 function getLineRing(innerRadius, thetaStart, thetaLength) {
