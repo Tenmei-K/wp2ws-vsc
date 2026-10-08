@@ -18,6 +18,8 @@ let params = {
   angle: Math.PI / 6,
   penumbra: 0,
   decay: 0,
+  // Fog
+  fogDensity: 0,
 };
 
 const WORLD_SIZE = 2000;
@@ -28,7 +30,7 @@ const FLOOR_POSITION = -WORLD_HALF / 2;
 let plane;
 
 let rings = [];
-// let lineRings = [];
+let lineRings = [];
 let ringPositions = [];
 let ringThetaStarts = [];
 let ringInnerRadiuses = [];
@@ -79,6 +81,11 @@ function setupThree() {
   // scene.add(spotLightHelper);
 
 
+  // FOG
+  scene.fog = new THREE.FogExp2("#00eeff", params.fogDensity);
+
+
+
   // GUI
   let folderRing = pane.addFolder({ title: "Ring", expanded: true });
   folderRing.addBinding(params, "maxRings", { min: 1, max: 50, step: 1, });
@@ -96,6 +103,14 @@ function setupThree() {
   folderLight.addBinding(params, "penumbra", { min: 0, max: 1, step: 0.01 });
   folderLight.addBinding(params, "decay", { min: 0, max: 1, step: 0.0001 });
 
+  let folderFog = pane.addFolder({ title: "Fog", expanded: true });
+  folderFog.addBinding(params, "fogDensity", {
+    min: 0,
+    max: 1,
+    step: 0.01
+  }).on("change", () => {
+    fog.density.set(params.fogDensity);
+  });
 
 }
 
@@ -107,10 +122,10 @@ function updateThree() {
       ringThetaStarts.push(random(0, 2 * PI));
       ringInnerRadiuses.push(3);
       ringThetaLengths.push(0);
-      ringSizes.push(random(params.minSize, params.maxSize))
+      ringSizes.push(random(params.minSize, params.maxSize));
       ringPositions.push(new THREE.Vector3(random(-WORLD_HALF, WORLD_HALF), random(0, WORLD_SIZE), random(-WORLD_HALF, WORLD_HALF)));
       rings.push([]);
-      // lineRings.push([]);
+      lineRings.push([]);
 
       cylinderHeights.push(0);
       cylinders.push([]);
@@ -130,13 +145,13 @@ function updateThree() {
         rings[j][0].material.dispose();
       }
 
-      // scene.remove(lineRings[j][0].mesh);
-      // if (lineRings[j][0].geometry) {
-      //   lineRings[j][0].geometry.dispose();
-      // }
-      // if (lineRings[j][0].material) {
-      //   lineRings[j][0].material.dispose();
-      // }
+      scene.remove(lineRings[j][0].mesh);
+      if (lineRings[j][0].geometry) {
+        lineRings[j][0].geometry.dispose();
+      }
+      if (lineRings[j][0].material) {
+        lineRings[j][0].material.dispose();
+      }
 
       ringThetaStarts.splice(j, 1);
       ringInnerRadiuses.splice(j, 1);
@@ -144,7 +159,7 @@ function updateThree() {
       ringSizes.splice(j, 1);
       ringPositions.splice(j, 1);
       rings.splice(j, 1);
-      // lineRings.splice(j, 1);
+      lineRings.splice(j, 1);
 
       scene.remove(cylinders[j][0].mesh);
       if (cylinders[j][0].geometry) {
@@ -169,13 +184,13 @@ function updateThree() {
       ring.pos.y = ringPositions[i].y;
       ring.pos.z = ringPositions[i].z;
 
-      /*
-      let lineRing = new LineRing(ringInnerRadiuses[i], ringThetaStarts[i], ringThetaLengths[i], ringSizes[i])
+
+      let lineRing = new LineRing(ringInnerRadiuses[i], ringThetaStarts[i], ringThetaLengths[i], ringSizes[i]);
       lineRings[i].push(lineRing);
       lineRing.pos.x = ringPositions[i].x;
       lineRing.pos.y = ringPositions[i].y;
       lineRing.pos.z = ringPositions[i].z;
-      */
+
 
       ringInnerRadiuses[i] -= 3 / (2 * PI / params.speed);
       ringThetaLengths[i] += params.speed;
@@ -188,7 +203,7 @@ function updateThree() {
         if (rings[i][0].material) {
           rings[i][0].material.dispose();
         }
-        /*
+
         scene.remove(lineRings[i][0].mesh);
         if (lineRings[i][0].geometry) {
           lineRings[i][0].geometry.dispose();
@@ -196,10 +211,10 @@ function updateThree() {
         if (lineRings[i][0].material) {
           lineRings[i][0].material.dispose();
         }
-        */
+
 
         rings[i].splice(0, 1);
-        // lineRings[i].splice(0, 1);
+        lineRings[i].splice(0, 1);
       }
 
 
@@ -243,7 +258,8 @@ function getPointLight() {
 function getPlane(w, h) {
   const geometry = new THREE.PlaneGeometry(w, h, 32);
   const material = new THREE.MeshPhongMaterial({
-    side: THREE.DoubleSide
+    side: THREE.DoubleSide,
+    // opacity: 0.3,
   });
   const mesh = new THREE.Mesh(geometry, material);
   mesh.receiveShadow = true;
@@ -271,6 +287,7 @@ function getRing(innerRadius, thetaStart, thetaLength) {
     //wireframe: true,
     side: THREE.DoubleSide,
     // receiveShadow: true,
+    opacity: 0.34,
   });
   const mesh = new THREE.Mesh(geometry, material);
   mesh.castShadow = true;
@@ -278,19 +295,19 @@ function getRing(innerRadius, thetaStart, thetaLength) {
   return mesh;
 }
 
-/*
+
 function getLineRing(innerRadius, thetaStart, thetaLength) {
   const geometry = new THREE.RingGeometry(innerRadius, 3, Math.floor(thetaLength / (2 * PI) * 8) + 1, 1, thetaStart, thetaLength); // innerRadius, outerRadius, thetaSegments, phiSegments, thetaStart, thetaLength
-  const material = new THREE.LineBasicMaterial({
-    color: "#fff700", 
-    // lineWidth: 1, 
-    opacity: 0.5,
+  const material = new THREE.MeshBasicMaterial({
+    color: "#ffffff",
+    side: THREE.DoubleSide,
+    opacity: 0.22,
+    wireframe: true,
   });
-  // material.resolution.set(window.innerWidth, window.innerHeight);
   const mesh = new THREE.Mesh(geometry, material);
   return mesh;
 }
-*/
+
 
 function getCylinder(height) {
   const geometry = new THREE.CylinderGeometry(0.1, 0.1, height, 8, Math.floor(height / params.maxHeight) * 4 + 1); // radiusTop, radiusBottom, height, radialSegments, heightSegments
@@ -344,7 +361,7 @@ class Ring {
   }
 
 }
-/*
+
 class LineRing {
   constructor(innerRadius, thetaStart, thetaLength, ringSize) {
     // mesh
@@ -385,7 +402,7 @@ class LineRing {
   }
 
 }
-*/
+
 class Cylinder {
   constructor(height, ringSize) {
     // mesh
