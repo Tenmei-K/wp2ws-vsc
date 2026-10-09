@@ -4,7 +4,7 @@
 <h2>2026.9-2026.12</h2>
 <br>
 
-![manimani-banner](manimani.png)
+![emerald-banner](emerald.jpg)
 <br>
 <h3>Projects</h3>
 

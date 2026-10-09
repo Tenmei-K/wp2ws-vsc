@@ -97,7 +97,7 @@ function setupThree() {
     max: 1,
     step: 0.01
   }).on("change", () => {
-    light.intensity = params.intensity;
+    light.intensity = params.intensity
   });
   folderLight.addBinding(params, "angle", {
     min: 0, max: PI / 6, step: 0.001
