@@ -11,8 +11,8 @@
 - [Project A: 私は雨](https://tenmei-k.github.io/wp2ws-vsc/projectA-2/)
         <br>Generative 3D Structures
 
-- [Project A (structure only): 巧筑八方](https://tenmei-k.github.io/wp2ws-vsc/projectA-1/)
-        <br>Generative 3D Structures
+<!-- - [Project A (structure only): 巧筑八方](https://tenmei-k.github.io/wp2ws-vsc/projectA-1/)
+        <br>Generative 3D Structures -->
 
 <br>
 <h3>Mini Projects</h3>
