@@ -67,6 +67,10 @@ function setupThree() {
   light.position.z = params.z;
   light.rotation.y = PI / 2;
 
+  light.intensity = params.intensity
+  light.angle = params.angle;
+  light.penumbra = params.penumbra;
+
   light.distance = params.distance;
   light.decay = params.decay;
   scene.add(light);
@@ -80,6 +84,7 @@ function setupThree() {
 
   // FOG
   scene.fog = new THREE.FogExp2("#00eeff", params.fogDensity);
+  scene.fog.density = params.fogDensity;
 
   // GUI
   let folderRing = pane.addFolder({ title: "Ring", expanded: true });

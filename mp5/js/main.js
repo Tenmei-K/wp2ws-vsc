@@ -1,6 +1,8 @@
-const WORLD_SIZE = 2000;
+const axesHelper = new THREE.AxesHelper(1000)
+
+const WORLD_SIZE = 4000;
 const WORLD_HALF = WORLD_SIZE / 2;
-const MAX_PARTICLE_NUMBER = 1000;
+const MAX_PARTICLE_NUMBER = 500;
 
 
 let particles = [];
@@ -11,12 +13,12 @@ let plane;
 
 
 function setupThree() {
-
+  scene.add(axesHelper);
   scene.background = new THREE.Color('#0b19fc');
 
   plane = getPlane();
   plane.rotation.x = PI / 2;
-  scene.add(plane);
+  // scene.add(plane);
 
 
   for (let i = 0; i < MAX_PARTICLE_NUMBER; i++) {
@@ -62,7 +64,7 @@ function updateThree() {
   if (particles.length < MAX_PARTICLE_NUMBER) {
     let p = new Particle();
     p.pos.x = random(-WORLD_HALF, WORLD_HALF);
-    p.pos.y = random(-WORLD_HALF, WORLD_HALF);
+    p.pos.y = random(0, WORLD_SIZE);
     p.pos.z = random(-WORLD_HALF, WORLD_HALF);
     particles.push(p);
   }
@@ -72,10 +74,17 @@ function updateThree() {
   for (let i = 0; i < particles.length; i++) {
     let p = particles[i];
     p.flow();
+    let f = new THREE.Vector3(sin(frame / 100) / 50, 0, cos(frame / 100) / 50)
+    p.applyForce(f);
+    p.attractedTo(0, 0, 0);
+
     p.updatePosition();
     p.updateLifespan();
     // remove particles if it's done
 
+    if ((p.pos.x ** 2 + p.pos.y ** 2 + p.pos.z ** 2) ** 0.5 < 100) {
+      p.isDone = true;
+    }
 
     if (p.isDone) {
       particles.splice(i, 1);
@@ -143,7 +152,7 @@ function getPoints() {
   const material = new THREE.PointsMaterial({
     color: 0xFFFFFF,
     vertexColors: true,
-    size: 50,
+    size: 100,
     map: texture,
     depthTest: false,
     blending: THREE.AdditiveBlending,
