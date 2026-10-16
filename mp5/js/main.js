@@ -74,9 +74,9 @@ function updateThree() {
   for (let i = 0; i < particles.length; i++) {
     let p = particles[i];
     p.flow();
-    let f = new THREE.Vector3(sin(frame / 100) / 50, 0, cos(frame / 100) / 50)
+    let f = new THREE.Vector3(sin(frame / 1000) / 10, 0, cos(frame / 1000) / 10)
     p.applyForce(f);
-    p.attractedTo(0, 0, 0);
+    // p.attractedTo(0, 0, 0);
 
     p.updatePosition();
     p.updateLifespan();

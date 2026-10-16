@@ -97,11 +97,11 @@ class Particle {
   attractedTo(x, y, z) {
     let target = new THREE.Vector3(x, y, z);
     let force = target.clone().sub(this.pos);
-    // if (force.length() < 100) {
-    //   force.multiplyScalar(-0.005);
-    // } else {
-      force.multiplyScalar(0.00005);
-    // }
+    if (force.length() < 100) {
+      force.multiplyScalar(-0.005);
+    } else {
+      force.multiplyScalar(0.001);
+    }
     let finalForce = new THREE.Vector3();
     finalForce.x = force.x / 2;
     finalForce.y = force.y / 2;
