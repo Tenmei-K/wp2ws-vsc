@@ -1,8 +1,10 @@
 const axesHelper = new THREE.AxesHelper(1000)
 
-const WORLD_SIZE = 4000;
+const WORLD_SIZE = 2000;
 const WORLD_HALF = WORLD_SIZE / 2;
-const MAX_PARTICLE_NUMBER = 500;
+// const MAX_PARTICLE_NUMBER = 1000;
+let MAX_PARTICLE_NUMBER = params.maxNumber;
+let SPIN_SPEED = params.spinSpeed;
 
 
 let particles = [];
@@ -13,7 +15,7 @@ let plane;
 
 
 function setupThree() {
-  scene.add(axesHelper);
+  // scene.add(axesHelper);
   scene.background = new THREE.Color('#0b19fc');
 
   plane = getPlane();
@@ -21,13 +23,18 @@ function setupThree() {
   // scene.add(plane);
 
 
+  /* 
+  // Error: THREE.BufferGeometry.computeBoundingSphere(): Computed radius is NaN. The "position" attribute is likely to have NaN values.
   for (let i = 0; i < MAX_PARTICLE_NUMBER; i++) {
-    let p = new Particle();
+    let p = new Particle(frame);
     p.pos.x = random(-WORLD_HALF, WORLD_HALF);
-    p.pos.y = random(-WORLD_HALF, WORLD_HALF);
+    p.pos.y = random(0, WORLD_SIZE * 3 / 4);
     p.pos.z = random(-WORLD_HALF, WORLD_HALF);
     particles.push(p);
   }
+  */
+
+
 
 
   pointCloud = getPoints();
@@ -36,6 +43,8 @@ function setupThree() {
 
 
 function updateThree() {
+  /*
+  ///// PLANE /////
   let positionAttributes = plane.geometry.attributes.position
   for (let i = 0; i < positionAttributes.count; i++) {
     let ptIndex = i * 3;
@@ -43,10 +52,10 @@ function updateThree() {
 
     let x = positionAttributes.array[ptIndex + 0];
     let y = positionAttributes.array[ptIndex + 1];
-    //let z = positionAttributes.array[ptIndex + 2];
+    // let z = positionAttributes.array[ptIndex + 2];
 
 
-    //positionAttributes.array[ptIndex + 2] = random(-100, 100);
+    // positionAttributes.array[ptIndex + 2] = random(-100, 100);
 
 
     let xOffset = x * 0.001 + frame * 0.003;
@@ -54,18 +63,17 @@ function updateThree() {
     positionAttributes.array[ptIndex + 2] = map(noise(xOffset, yOffset), 0, 1, -300, 300) + 300;
   }
   positionAttributes.needsUpdate = true;
+  */
 
-
-
-
-
-
+  ///// PARTICLES /////
   // generate particles
   if (particles.length < MAX_PARTICLE_NUMBER) {
-    let p = new Particle();
+    let p = new Particle(frame, 0);
     p.pos.x = random(-WORLD_HALF, WORLD_HALF);
     p.pos.y = random(0, WORLD_SIZE);
     p.pos.z = random(-WORLD_HALF, WORLD_HALF);
+    let xzDis = (p.pos.x ** 2 + p.pos.z ** 2) ** 0.5
+    p.xzDis = xzDis
     particles.push(p);
   }
 
@@ -73,16 +81,21 @@ function updateThree() {
   // update particles
   for (let i = 0; i < particles.length; i++) {
     let p = particles[i];
-    p.flow();
-    let f = new THREE.Vector3(sin(frame / 1000) / 10, 0, cos(frame / 1000) / 10)
-    p.applyForce(f);
-    // p.attractedTo(0, 0, 0);
+
+    let xzDis = p.xzDis
+    push();
+    p.setPosition(0, p.pos.y, 0);
+    // p.setVelocity(sin((frame + p.frame) / 50) * xzDis, 0, cos((frame + p.frame) / 50) * xzDis);
+    p.setVelocity(sin((frame + p.frame) / (1000 / SPIN_SPEED)) * xzDis * (p.lifespan * 1.01), - p.pos.y * p.lifespan / MAX_PARTICLE_NUMBER, cos((frame + p.frame) / (1000 / SPIN_SPEED)) * xzDis * (p.lifespan * 1.01));
+    pop();
+
+    p.attractedTo(0, 0, 0);
 
     p.updatePosition();
     p.updateLifespan();
-    // remove particles if it's done
 
-    if ((p.pos.x ** 2 + p.pos.y ** 2 + p.pos.z ** 2) ** 0.5 < 100) {
+    // remove particles if it's done
+    if ((p.pos.x ** 2 + p.pos.y ** 2 + p.pos.z ** 2) ** 0.5 < 200) {
       p.isDone = true;
     }
 
@@ -152,7 +165,7 @@ function getPoints() {
   const material = new THREE.PointsMaterial({
     color: 0xFFFFFF,
     vertexColors: true,
-    size: 100,
+    size: 45,
     map: texture,
     depthTest: false,
     blending: THREE.AdditiveBlending,
