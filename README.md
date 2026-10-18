@@ -17,7 +17,9 @@
 <br>
 <h3>Mini Projects</h3>
 
-- [W01. Transformation and Vectors](https://editor.p5js.org/Tenmei-K/sketches/eGkTZMidH)
-        <br>vector, vector, vector
+- [W05. Particles of Becoming](https://tenmei-k.github.io/wp2ws-vsc/mp5/)
+        <br>さよならララ
 - [W02. Virtual Minimalist Sculptures with Three.js](https://tenmei-k.github.io/wp2ws-vsc/mp2/)
         <br>cubes
+- [W01. Transformation and Vectors](https://editor.p5js.org/Tenmei-K/sketches/eGkTZMidH)
+        <br>vector, vector, vector
