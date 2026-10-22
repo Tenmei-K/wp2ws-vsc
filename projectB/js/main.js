@@ -22,7 +22,7 @@ let starPointClouds = [];
 
 
 let groundMirror, ceilingMirror;
-let RESOLUTION_SCALE = 0.95 - params.Intensity * 0.065;
+let RESOLUTION_SCALE = 0.95 - params.Intensity * 0.07;
 
 
 function setupThree() {
@@ -113,7 +113,7 @@ function updateThree() {
   // starPointCloud = getStarPoints(starScale, STAR_MAX_SCALE); // 此处在setup里加入parameter，update里无法更新
   // scene.add(starPointCloud);
 
-  RESOLUTION_SCALE = 0.95 - params.Intensity * 0.065;
+  RESOLUTION_SCALE = 0.95 - params.Intensity * 0.07;
   updateReflectionSize();
 
   ///// PARTICLES /////
