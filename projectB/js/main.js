@@ -7,7 +7,7 @@ const WORLD_HALF = WORLD_SIZE / 2;
 let MAX_PARTICLE_NUMBER = 2000 + params.Intensity * 100;
 let MAX_INPARTICLE_NUMBER = 600 - params.Intensity * 30;
 // let SPIN_SPEED = params.spinSpeed;
-let WALL_THICKNESS = 200 + params.Intensity * 40
+let WALL_THICKNESS = 200 + params.Intensity * 20;
 
 let particles = [];
 let inParticles = [];
@@ -27,7 +27,7 @@ let RESOLUTION_SCALE = 0.95 - params.Intensity * 0.07;
 
 function setupThree() {
   // scene.add(axesHelper);
-  scene.background = new THREE.Color('#031837');
+  scene.background = new THREE.Color('#011128');
   // scene.background = new THREE.Color('#030972');
   // scene.background = new THREE.Color('#0b19fc');
 
@@ -85,18 +85,14 @@ function setupThree() {
 
   ///// PARTICLES /////
 
-  MAX_PARTICLE_NUMBER = 2000 + params.Intensity * 100;
-  MAX_INPARTICLE_NUMBER = 600 - params.Intensity * 30;
-  WALL_THICKNESS = 200 + params.Intensity * 40
-
-  for (let i = 0; i < 1; i++) {
-    let star = new Star();
-    star.pos.x = 0;
-    star.pos.y = 0;
-    star.pos.z = 0;
-    stars.push(star);
-    // star.geometry.scale.needsUpdate = true;
-  }
+  // for (let i = 0; i < 1; i++) {
+  let star = new Star();
+  star.pos.x = 0;
+  star.pos.y = 0;
+  star.pos.z = 0;
+  stars.push(star);
+  // star.geometry.scale.needsUpdate = true;
+  // }
 
   pointCloud = getPoints();
   scene.add(pointCloud);
@@ -179,20 +175,19 @@ function updateThree() {
   for (let i = 0; i < particles.length; i++) {
     let p = particles[i];
 
-    // let xzDis = p.xzDis * sin((abs(p.pos.y) - WORLD_SIZE / 1.2) / (WORLD_SIZE / 1.2)) * 1.2;
-    // let xzDis = p.xzDis * sin(abs(p.pos.y) - WORLD_SIZE / 1.2) * 1.2;
     let xzDis = p.xzDis;
     push();
     p.setPosition(0, p.pos.y, 0);
     p.setVelocity(sin((frame + p.frame) / (50 - params.Intensity * 2.5)) * xzDis, 0, cos((frame + p.frame) / (50 - params.Intensity * 2.5)) * xzDis);
-
-    // p.setVelocity(sin((frame + p.frame) / (1000 / SPIN_SPEED)) * xzDis * (p.lifespan * 1.01), - p.pos.y * p.lifespan / MAX_PARTICLE_NUMBER, cos((frame + p.frame) / (1000 / SPIN_SPEED)) * xzDis * (p.lifespan * 1.01));
     pop();
 
-
     p.updatePosition();
-    // p.updateLifespan();
+    p.updateLifespan();
 
+  }
+
+  for (let i = particles.length - 1; i >= 0; i--) {
+    let p = particles[i];
 
     if (p.isDone) {
       scene.remove(p);
@@ -203,7 +198,6 @@ function updateThree() {
         p.material.dispose();
       }
       particles.splice(i, 1);
-      i--;
     }
   }
 
@@ -218,7 +212,12 @@ function updateThree() {
     pop();
 
     p.updatePosition();
-    // p.updateLifespan();
+    p.updateLifespan();
+
+  }
+
+  for (let i = inParticles.length - 1; i >= 0; i--) {
+    let p = inParticles[i];
 
     if (p.isDone) {
       scene.remove(p);
@@ -228,10 +227,10 @@ function updateThree() {
       if (p.material) {
         p.material.dispose();
       }
-      particles.splice(i, 1);
-      i--;
+      inParticles.splice(i, 1);
     }
   }
+
 
 
   starScale = abs(sin(frame / (100 - params.Intensity * 7.2)));
@@ -396,7 +395,7 @@ function getInPoints() {
   const material = new THREE.PointsMaterial({
     color: "#5495d6",
     vertexColors: true,
-    opacity: 0.5,
+    opacity: 0.6,
     size: 12,
     // map: texture,
     depthTest: false,
@@ -426,9 +425,9 @@ function getPoints() {
   const material = new THREE.PointsMaterial({
     // color: "#bf3636",
     // color: "#ff0000",
-    color: "#5f3237",
+    color: "#631722",
     vertexColors: true,
-    size: 28,
+    size: 30,
     map: texture,
     depthTest: false,
     blending: THREE.AdditiveBlending,

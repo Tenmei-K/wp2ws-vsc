@@ -15,7 +15,7 @@ class Particle {
 
     this.lifespan = 1.0;
     // this.lifeReduction = random(0.001, 0.005);
-    this.lifeReduction = 0.002;
+    this.lifeReduction = 0.0003;
     this.isDone = false;
 
     this.frame = frame;

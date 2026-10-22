@@ -44,7 +44,7 @@ function setupGUI() {
     step: 1,
   });
 
-  
+
   folderObservation.addBlade({ view: "separator" });
 
   folderObservation.addBinding(params, "reflectionSize", { readonly: true });
@@ -59,7 +59,10 @@ function setupGUI() {
     max: 10,
     step: 1,
   }).on("change", () => {
-    SPIN_SPEED = params.Intensity;
+    MAX_PARTICLE_NUMBER = 2000 + params.Intensity * 100;
+    MAX_INPARTICLE_NUMBER = 600 - params.Intensity * 30;
+    WALL_THICKNESS = 200 + params.Intensity * 20;
+    STAR_MAX_SCALE = 300 + params.Intensity * 50;
   });
 
 
