@@ -8,11 +8,14 @@
 <br>
 <h3>Projects</h3>
 
+- [Project B: 絶縁 Insulation](https://tenmei-k.github.io/wp2ws-vsc/projectB/)
+        <br>Virtual Environment
+
 - [Project A: 私は雨](https://tenmei-k.github.io/wp2ws-vsc/projectA-2/)
-        <br>Generative 3D Structures
+        <br>Generative 3D Structures - Applying Light and Shadow
 
 - [Project A (structure only): 巧筑八方](https://tenmei-k.github.io/wp2ws-vsc/projectA-1/)
-        <br>Generative 3D Structures
+        <br>Generative 3D Structures - Structure Building
 
 <br>
 <h3>Mini Projects</h3>
