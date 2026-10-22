@@ -22,7 +22,7 @@ let starPointClouds = [];
 
 
 let groundMirror, ceilingMirror;
-let RESOLUTION_SCALE = 0.95 - params.Intensity * 0.035;
+let RESOLUTION_SCALE = 0.95 - params.Intensity * 0.065;
 
 
 function setupThree() {
@@ -113,7 +113,7 @@ function updateThree() {
   // starPointCloud = getStarPoints(starScale, STAR_MAX_SCALE); // 此处在setup里加入parameter，update里无法更新
   // scene.add(starPointCloud);
 
-  RESOLUTION_SCALE = 0.95 - params.Intensity * 0.035;
+  RESOLUTION_SCALE = 0.95 - params.Intensity * 0.065;
   updateReflectionSize();
 
   ///// PARTICLES /////
@@ -426,7 +426,7 @@ function getPoints() {
   const material = new THREE.PointsMaterial({
     // color: "#bf3636",
     // color: "#ff0000",
-    color: "#ad5b65",
+    color: "#5f3237",
     vertexColors: true,
     size: 26,
     map: texture,
