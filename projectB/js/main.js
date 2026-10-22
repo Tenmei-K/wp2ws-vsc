@@ -234,7 +234,7 @@ function updateThree() {
   }
 
 
-  starScale = abs(sin(frame / (100 - params.Intensity * 7)));
+  starScale = abs(sin(frame / (100 - params.Intensity * 7.2)));
   STAR_MAX_SCALE = 300 + params.Intensity * 50;
 
   if (stars.length > 0) {
@@ -428,7 +428,7 @@ function getPoints() {
     // color: "#ff0000",
     color: "#5f3237",
     vertexColors: true,
-    size: 26,
+    size: 28,
     map: texture,
     depthTest: false,
     blending: THREE.AdditiveBlending,
