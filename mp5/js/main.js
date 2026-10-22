@@ -86,14 +86,13 @@ function updateThree() {
     push();
     p.setPosition(0, p.pos.y, 0);
     // p.setVelocity(sin((frame + p.frame) / 50) * xzDis, 0, cos((frame + p.frame) / 50) * xzDis);
-    // p.setVelocity(sin((frame + p.frame) / (1000 / SPIN_SPEED)) * xzDis * (p.lifespan * 1.01), - p.pos.y * p.lifespan / MAX_PARTICLE_NUMBER, cos((frame + p.frame) / (1000 / SPIN_SPEED)) * xzDis * (p.lifespan * 1.01));
-    p.setVelocity(sin((frame + p.frame) / (1000 / SPIN_SPEED)) * xzDis * (p.lifespan * 1.01), 0, cos((frame + p.frame) / (1000 / SPIN_SPEED)) * xzDis * (p.lifespan * 1.01));
+    p.setVelocity(sin((frame + p.frame) / (1000 / SPIN_SPEED)) * xzDis * (p.lifespan * 1.01), - p.pos.y * p.lifespan / MAX_PARTICLE_NUMBER, cos((frame + p.frame) / (1000 / SPIN_SPEED)) * xzDis * (p.lifespan * 1.01));
     pop();
 
     p.attractedTo(0, 0, 0);
 
     p.updatePosition();
-    // p.updateLifespan();
+    p.updateLifespan();
 
     // remove particles if it's done
     if ((p.pos.x ** 2 + p.pos.y ** 2 + p.pos.z ** 2) ** 0.5 < 200) {

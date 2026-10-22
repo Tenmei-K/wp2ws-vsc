@@ -1,8 +1,12 @@
 let params = {
   fps: 0,
   particleNumber: 0,
+  insideParticleNumber: 0,
   maxNumber: 1000,
-  spinSpeed: 5,
+  Intensity: 0,
+
+  resolutionScale: 0.5,
+  reflectionSize: "",
 };
 
 
@@ -11,7 +15,7 @@ let pane;
 
 function setupGUI() {
   pane = new Pane();
-  
+
   pane.addBinding(params, "fps", {
     label: "FPS",
     readonly: true,
@@ -25,32 +29,41 @@ function setupGUI() {
   });
   pane.addBlade({ view: "separator" });
 
-  
+
   pane.addBinding(params, "particleNumber", {
     // min: 0,
     // max: MAX_PARTICLE_NUMBER,
     step: 1,
   });
-  
-  // pane.addBinding(params, "maxNumber", {
-  //   min: 100,
-  //   max: 2000,
-  //   step: 100,
-  // }).on("change", () => {
-  //   MAX_PARTICLE_NUMBER = params.maxNumber;
-  // });
-  pane.addBinding(params, "spinSpeed", {
-    min: 5,
-    max: 50,
+  pane.addBinding(params, "insideParticleNumber", {
+    // min: 0,
+    // max: MAX_PARTICLE_NUMBER,
+    step: 1,
+  });
+
+  pane.addBlade({ view: "separator" });
+
+  pane.addBinding(params, "Intensity", {
+    min: 0,
+    max: 10,
     step: 1,
   }).on("change", () => {
-    SPIN_SPEED = params.spinSpeed;
+    SPIN_SPEED = params.Intensity;
   });
+
+  pane.addBlade({ view: "separator" });
+
+  // pane.addBinding(params, "resolutionScale", { min: 0.25, max: 1, step: 0.25 })
+  //   .on("change", updateReflectionSize);
+  pane.addBinding(params, "reflectionSize", { readonly: true });
 }
+
+
 
 
 function updateGUI() {
   params.particleNumber = particles.length;
-  
+  params.insideParticleNumber = inParticles.length;
+
   pane.refresh();
 }

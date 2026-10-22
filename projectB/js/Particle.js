@@ -14,7 +14,8 @@ class Particle {
     this.rotAcc = new THREE.Vector3();
 
     this.lifespan = 1.0;
-    this.lifeReduction = random(0.001, 0.005) * params.spinSpeed / 100;
+    // this.lifeReduction = random(0.001, 0.005);
+    this.lifeReduction = 0.002;
     this.isDone = false;
 
     this.frame = frame;
@@ -86,8 +87,6 @@ class Particle {
     }
   }
   updateLifespan() {
-    this.xzDis -= this.lifeReduction * 500
-
     this.lifespan -= this.lifeReduction;
     if (this.lifespan <= 0) {
       this.lifespan = 0;

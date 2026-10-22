@@ -1,5 +1,6 @@
-class OutParticle {
-  constructor(frame, xzDis) {
+class Star {
+  constructor() {
+
     this.pos = new THREE.Vector3();
     this.vel = new THREE.Vector3();
     this.acc = new THREE.Vector3();
@@ -16,11 +17,6 @@ class OutParticle {
     this.lifespan = 1.0;
     this.lifeReduction = random(0.001, 0.005) * params.spinSpeed / 100;
     this.isDone = false;
-
-    this.frame = frame;
-    this.xzDis = xzDis;
-    // this.ySave = this.pos.y;
-    // this.zSave = this.pos.z;
   }
   setPosition(x, y, z) {
     this.pos = new THREE.Vector3(x, y, z);
