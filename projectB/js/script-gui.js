@@ -51,7 +51,10 @@ function setupGUI() {
 
   pane.addBlade({ view: "separator" });
 
-  pane.addBinding(params, "Intensity", {
+
+  let folderOperation = pane.addFolder({ title: "Operation", expanded: true });
+
+  folderOperation.addBinding(params, "Intensity", {
     min: 0,
     max: 10,
     step: 1,
