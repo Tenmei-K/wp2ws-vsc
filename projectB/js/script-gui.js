@@ -5,6 +5,10 @@ let params = {
   maxNumber: 1000,
   Intensity: 0,
 
+  shellSize: 1,
+
+  starParticlesShow: true,
+
   resolutionScale: 0.5,
   reflectionSize: "",
 };
@@ -61,8 +65,23 @@ function setupGUI() {
   }).on("change", () => {
     MAX_PARTICLE_NUMBER = 2000 + params.Intensity * 100;
     MAX_INPARTICLE_NUMBER = 600 - params.Intensity * 30;
+    SPACE_RADIUS = WORLD_HALF - params.Intensity * 50
     WALL_THICKNESS = 200 + params.Intensity * 20;
     STAR_MAX_SCALE = 300 + params.Intensity * 50;
+  });
+
+  folderOperation.addBinding(params, "shellSize", {
+    min: 1,
+    max: 8,
+    step: 1,
+  }).on("change", () => {
+    SHELL_SIZE = 10 - params.shellSize
+  });
+
+  folderOperation.addBinding(
+    params, 'starParticlesShow'
+  ).on("change", () => {
+    inStarsShow = params.starParticlesShow;
   });
 
 

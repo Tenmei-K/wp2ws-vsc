@@ -14,7 +14,7 @@ function initThree() {
   const near = 0.1;
   const far = 10000;
   camera = new THREE.PerspectiveCamera(fov, aspectRatio, near, far);
-  camera.position.z = 1000;
+  camera.position.z = 2000;
 
   renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);

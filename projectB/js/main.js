@@ -1,18 +1,22 @@
 const axesHelper = new THREE.AxesHelper(1000)
 
-const WORLD_SIZE = 2000;
+const WORLD_SIZE = 2400;
 const WORLD_HALF = WORLD_SIZE / 2;
-// const MAX_PARTICLE_NUMBER = 1000;
-// let MAX_PARTICLE_NUMBER = params.maxNumber;
-let MAX_PARTICLE_NUMBER = 2000 + params.Intensity * 100;
+
+let MAX_PARTICLE_NUMBER = 1800 + params.Intensity * 100;
 let MAX_INPARTICLE_NUMBER = 600 - params.Intensity * 30;
-// let SPIN_SPEED = params.spinSpeed;
-let WALL_THICKNESS = 200 + params.Intensity * 20;
+let MAX_INSTAR_NUMBER = 30;
+
+let SPACE_HEIGHT_HALF = WORLD_SIZE / 3 - 50
+let SPACE_RADIUS = WORLD_HALF - params.Intensity * 20
+let WALL_THICKNESS = 240 + params.Intensity * 10;
 
 let particles = [];
 let inParticles = [];
 let pointCloud;
 let inPointCloud;
+
+let SHELL_SIZE = 10 - params.shellSize;
 
 let STAR_MAX_SCALE = 300 + params.Intensity * 50;
 
@@ -20,14 +24,18 @@ let stars = [];
 let starScale = 0.01;
 let starPointClouds = [];
 
+let inStars = [];
+let inStarCloud;
+let inStarsShow = params.starParticlesShow;
 
 let groundMirror, ceilingMirror;
-let RESOLUTION_SCALE = 0.95 - params.Intensity * 0.07;
+let RESOLUTION_SCALE = 0.95 - params.Intensity * 0.05;
 
 
 function setupThree() {
   // scene.add(axesHelper);
-  scene.background = new THREE.Color('#011128');
+  scene.background = new THREE.Color('#000710');
+  // scene.background = new THREE.Color('#011128');
   // scene.background = new THREE.Color('#030972');
   // scene.background = new THREE.Color('#0b19fc');
 
@@ -71,13 +79,13 @@ function setupThree() {
   ///// MIRROR /////
   groundMirror = getCircleMirror();
   scene.add(groundMirror);
-  groundMirror.position.y = -WORLD_SIZE * 3 / 4 + 300;
+  groundMirror.position.y = -SPACE_HEIGHT_HALF;
   groundMirror.rotateX(-Math.PI / 2);
   groundMirror.scale.set(3, 3)
 
   ceilingMirror = getCircleMirror();
   scene.add(ceilingMirror);
-  ceilingMirror.position.y = WORLD_SIZE * 3 / 4 - 300;
+  ceilingMirror.position.y = SPACE_HEIGHT_HALF;
   ceilingMirror.rotateX(Math.PI / 2);
   ceilingMirror.scale.set(3, 3)
 
@@ -101,6 +109,10 @@ function setupThree() {
   let starPointCloud = getStarPoints(starScale, STAR_MAX_SCALE); // 此处在setup里加入parameter，update里无法更新
   starPointClouds.push(starPointCloud);
   scene.add(starPointCloud);
+  inStarCloud = getInStars();
+  if (inStarsShow == true) {
+    scene.add(inStarCloud);
+  }
 }
 
 
@@ -121,17 +133,17 @@ function updateThree() {
     let zRan = random(0, 1);
 
     if (xRan < 0.5) {
-      p.pos.x = random(-WORLD_HALF - WALL_THICKNESS, -WORLD_HALF + WALL_THICKNESS);
+      p.pos.x = random(-SPACE_RADIUS - WALL_THICKNESS, -SPACE_RADIUS + WALL_THICKNESS);
     } else {
-      p.pos.x = random(WORLD_HALF - WALL_THICKNESS, WORLD_HALF + WALL_THICKNESS);
+      p.pos.x = random(SPACE_RADIUS - WALL_THICKNESS, SPACE_RADIUS + WALL_THICKNESS);
     }
 
-    p.pos.y = random(-WORLD_SIZE * 3 / 4, WORLD_SIZE * 3 / 4);
+    p.pos.y = random(-SPACE_HEIGHT_HALF, SPACE_HEIGHT_HALF);
 
     if (zRan < 0.5) {
-      p.pos.z = random(-WORLD_HALF - WALL_THICKNESS, -WORLD_HALF + WALL_THICKNESS);
+      p.pos.z = random(-SPACE_RADIUS - WALL_THICKNESS, -SPACE_RADIUS + WALL_THICKNESS);
     } else {
-      p.pos.z = random(WORLD_HALF - WALL_THICKNESS, WORLD_HALF + WALL_THICKNESS);
+      p.pos.z = random(SPACE_RADIUS - WALL_THICKNESS, SPACE_RADIUS + WALL_THICKNESS);
     }
 
     let xzDis = (p.pos.x ** 2 + p.pos.z ** 2) ** 0.5
@@ -149,7 +161,7 @@ function updateThree() {
       p.pos.x = random(WORLD_HALF - 100, WORLD_HALF) / 1.2;
     }
 
-    p.pos.y = random(-WORLD_SIZE / 1.8, WORLD_SIZE / 1.8) / 1.2;
+    p.pos.y = random(-WORLD_SIZE / 2.8, WORLD_SIZE / 2.8);
 
     if (zRan < 0.5) {
       p.pos.z = random(-WORLD_HALF, -WORLD_HALF + 100) / 1.2;
@@ -167,6 +179,35 @@ function updateThree() {
     star.pos.y = 0;
     star.pos.z = 0;
     stars.push(star);
+  }
+  if (inStarsShow == true && inStars.length < MAX_INSTAR_NUMBER && frame % (20 - params.Intensity) == 0) {
+    let p = new InStar();
+
+    /*
+    let xRan = random(0, 1);
+    // let yRan = random(0, 1);
+    let zRan = random(0, 1);
+
+    if (xRan < 0.5) {
+      p.pos.x = random(-SPACE_RADIUS - WALL_THICKNESS, -SPACE_RADIUS + WALL_THICKNESS);
+    } else {
+      p.pos.x = random(SPACE_RADIUS - WALL_THICKNESS, SPACE_RADIUS + WALL_THICKNESS);
+    }
+
+    p.pos.y = random(-WORLD_SIZE / 3, WORLD_SIZE / 3);
+
+    if (zRan < 0.5) {
+      p.pos.z = random(-SPACE_RADIUS - WALL_THICKNESS, -SPACE_RADIUS + WALL_THICKNESS);
+    } else {
+      p.pos.z = random(SPACE_RADIUS - WALL_THICKNESS, SPACE_RADIUS + WALL_THICKNESS);
+    }
+      */
+
+    p.pos.x = random(-(SPACE_RADIUS - WALL_THICKNESS), (SPACE_RADIUS - WALL_THICKNESS));
+    p.pos.y = p.pos.y = random(-SPACE_HEIGHT_HALF, SPACE_HEIGHT_HALF);
+    p.pos.z = random(-(SPACE_RADIUS - WALL_THICKNESS), (SPACE_RADIUS - WALL_THICKNESS));
+
+    inStars.push(p);
   }
 
 
@@ -189,6 +230,11 @@ function updateThree() {
   for (let i = particles.length - 1; i >= 0; i--) {
     let p = particles[i];
 
+    // if (abs(p.pos.x) < SPACE_RADIUS - WALL_THICKNESS && abs(p.pos.z) < SPACE_RADIUS - WALL_THICKNESS) {
+    //   p.opacity = 0;
+    //   p.isDone = true;
+    // }
+
     if (p.isDone) {
       scene.remove(p);
       if (p.geometry) {
@@ -204,7 +250,8 @@ function updateThree() {
   for (let i = 0; i < inParticles.length; i++) {
     let p = inParticles[i];
 
-    let xzDis = p.xzDis * sin((abs(p.pos.y) - WORLD_SIZE / 1.2) / (WORLD_SIZE / 1.2)) ** 6 * 1.2;
+    let xzDisOrigin = p.xzDis * sin((abs(p.pos.y) - WORLD_SIZE / 1.2) / (WORLD_SIZE / 1.2)) ** SHELL_SIZE * 1.2;
+    let xzDis = map(abs(sin(frame / (100 - params.Intensity * 7.2))), 0, 1, xzDisOrigin * (1.25 + params.Intensity / 30) / 2.5, xzDisOrigin * (1.25 + params.Intensity / 30))
 
     push();
     p.setPosition(0, p.pos.y, 0);
@@ -230,7 +277,6 @@ function updateThree() {
       inParticles.splice(i, 1);
     }
   }
-
 
 
   starScale = abs(sin(frame / (100 - params.Intensity * 7.2)));
@@ -261,6 +307,36 @@ function updateThree() {
         starPointClouds[0].material.dispose();
       }
       starPointClouds.splice(0, 1);
+    }
+  }
+
+
+  if (inStarsShow == false) {
+    // scene.remove(inStarCloud)
+    inStarCloud.visible = false;
+  } else {
+    inStarCloud.visible = true;
+  }
+  for (let i = 0; i < inStars.length; i++) {
+    let p = inStars[i];
+    // p.flow()
+
+    p.updatePosition();
+    p.updateLifespan();
+  }
+
+  for (let i = inStars.length - 1; i >= 0; i--) {
+    let p = inStars[i];
+
+    if (p.isDone) {
+      scene.remove(p);
+      // if (p.geometry) {
+      //   p.geometry.dispose();
+      // }
+      // if (p.material) {
+      //   p.material.dispose();
+      // }
+      inStars.splice(i, 1);
     }
   }
 
@@ -301,9 +377,13 @@ function updateThree() {
     inPositionArray[ptIndex + 2] = p.pos.z;
 
 
-    inColorArray[ptIndex + 0] = 1.5 * p.lifespan; // R
-    inColorArray[ptIndex + 1] = 0.6 * p.lifespan; // G
-    inColorArray[ptIndex + 2] = 0.2 * p.lifespan; // B
+    // inColorArray[ptIndex + 0] = 1.5 * p.lifespan; // R
+    // inColorArray[ptIndex + 1] = 0.6 * p.lifespan; // G
+    // inColorArray[ptIndex + 2] = 0.2 * p.lifespan; // B
+    inColorArray[ptIndex + 0] = 0.2;
+    inColorArray[ptIndex + 1] = 0.2;
+    inColorArray[ptIndex + 2] = 0.2;
+
   }
   //inPointCloud.geometry.drawRange.count = params.particleNumber;
   inPointCloud.geometry.setDrawRange(0, MAX_INPARTICLE_NUMBER);
@@ -335,8 +415,68 @@ function updateThree() {
     starPointClouds[j].material.size.needsUpdate = true;
   }
 
+  let inStarPositionArray = inStarCloud.geometry.attributes.position.array;
+  let inStarColorArray = inStarCloud.geometry.attributes.color.array;
+  for (let i = 0; i < inStars.length; i++) {
+    let p = inStars[i];
+    let ptIndex = i * 3;
+
+
+    inStarPositionArray[ptIndex + 0] = p.pos.x;
+    inStarPositionArray[ptIndex + 1] = p.pos.y;
+    inStarPositionArray[ptIndex + 2] = p.pos.z;
+
+
+    inStarColorArray[ptIndex + 0] = 1.5 * p.lifespan; // R
+    inStarColorArray[ptIndex + 1] = 0.6 * p.lifespan; // G
+    inStarColorArray[ptIndex + 2] = 0.2 * p.lifespan; // B
+
+  }
+  inStarCloud.geometry.setDrawRange(0, MAX_INSTAR_NUMBER);
+  inStarCloud.geometry.attributes.position.needsUpdate = true;
+  inStarCloud.geometry.attributes.color.needsUpdate = true;
+
 }
 
+
+
+function updateReflectionSize() {
+  // we use ceil() here to ensure the render target size is an integer and greater than zero!
+  const width = ceil(window.innerWidth * RESOLUTION_SCALE);
+  const height = ceil(window.innerHeight * RESOLUTION_SCALE);
+  groundMirror.getRenderTarget().setSize(width, height);
+  ceilingMirror.getRenderTarget().setSize(width, height);
+  params.reflectionSize = `${width} x ${height}`;
+}
+
+function getInStars() {
+  const vertices = new Float32Array(MAX_PARTICLE_NUMBER * 3);
+  const colors = new Float32Array(MAX_PARTICLE_NUMBER * 3);
+
+
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+  geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+
+  const texture = new THREE.TextureLoader().load("assets/particle_texture.PNG");
+
+
+  const material = new THREE.PointsMaterial({
+    color: "#5ec9ca",
+    vertexColors: true,
+    size: random(30, 60),
+    map: texture,
+    depthTest: false,
+    blending: THREE.AdditiveBlending,
+  });
+
+
+  const points = new THREE.Points(geometry, material);
+
+
+  return points;
+}
 
 function getStarPoints(starScale, maxScale) {
   const vertices = new Float32Array(MAX_PARTICLE_NUMBER * 3);
@@ -367,18 +507,6 @@ function getStarPoints(starScale, maxScale) {
   return points;
 }
 
-function updateReflectionSize() {
-  // we use ceil() here to ensure the render target size is an integer and greater than zero!
-  const width = ceil(window.innerWidth * RESOLUTION_SCALE);
-  const height = ceil(window.innerHeight * RESOLUTION_SCALE);
-  groundMirror.getRenderTarget().setSize(width, height);
-  ceilingMirror.getRenderTarget().setSize(width, height);
-  params.reflectionSize = `${width} x ${height}`;
-}
-
-
-
-
 function getInPoints() {
   const vertices = new Float32Array(MAX_PARTICLE_NUMBER * 3);
   const colors = new Float32Array(MAX_PARTICLE_NUMBER * 3);
@@ -393,9 +521,9 @@ function getInPoints() {
 
 
   const material = new THREE.PointsMaterial({
-    color: "#5495d6",
+    color: "#80b9f2",
     vertexColors: true,
-    opacity: 0.6,
+    opacity: 0.4,
     size: 12,
     // map: texture,
     depthTest: false,
@@ -425,9 +553,9 @@ function getPoints() {
   const material = new THREE.PointsMaterial({
     // color: "#bf3636",
     // color: "#ff0000",
-    color: "#631722",
+    color: "#5e131f",
     vertexColors: true,
-    size: 30,
+    size: random(30, 60),
     map: texture,
     depthTest: false,
     blending: THREE.AdditiveBlending,
