@@ -465,7 +465,7 @@ function getInStars() {
   const material = new THREE.PointsMaterial({
     color: "#5ec9ca",
     vertexColors: true,
-    size: random(30, 60),
+    size: random(50, 80),
     map: texture,
     depthTest: false,
     blending: THREE.AdditiveBlending,

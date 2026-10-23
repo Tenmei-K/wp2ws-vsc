@@ -38,11 +38,13 @@ function setupGUI() {
 
 
   folderObservation.addBinding(params, "particleNumber", {
+    label: "Particle Number",
     // min: 0,
     // max: MAX_PARTICLE_NUMBER,
     step: 1,
   });
   folderObservation.addBinding(params, "insideParticleNumber", {
+    label: "Inside Particle Number",
     // min: 0,
     // max: MAX_PARTICLE_NUMBER,
     step: 1,
@@ -51,7 +53,7 @@ function setupGUI() {
 
   folderObservation.addBlade({ view: "separator" });
 
-  folderObservation.addBinding(params, "reflectionSize", { readonly: true });
+  folderObservation.addBinding(params, "reflectionSize", { label: "Reflection Size", readonly: true });
 
   pane.addBlade({ view: "separator" });
 
@@ -71,6 +73,7 @@ function setupGUI() {
   });
 
   folderOperation.addBinding(params, "shellSize", {
+    label: "Shell Size",
     min: 1,
     max: 8,
     step: 1,
@@ -79,7 +82,7 @@ function setupGUI() {
   });
 
   folderOperation.addBinding(
-    params, 'starParticlesShow'
+    params, 'starParticlesShow', {label: "Star Particles Show"}
   ).on("change", () => {
     inStarsShow = params.starParticlesShow;
   });
