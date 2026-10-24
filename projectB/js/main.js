@@ -5,7 +5,7 @@ const WORLD_HALF = WORLD_SIZE / 2;
 
 let MAX_PARTICLE_NUMBER = 1800 + params.Intensity * 100;
 let MAX_INPARTICLE_NUMBER = 600 - params.Intensity * 30;
-let MAX_INSTAR_NUMBER = 30;
+let MAX_INSTAR_NUMBER = 60;
 
 let SPACE_HEIGHT_HALF = WORLD_SIZE / 3 - 50
 let SPACE_RADIUS = WORLD_HALF - params.Intensity * 20
@@ -27,6 +27,8 @@ let starPointClouds = [];
 let inStars = [];
 let inStarCloud;
 let inStarsShow = params.starParticlesShow;
+
+let model;
 
 let groundMirror, ceilingMirror;
 let RESOLUTION_SCALE = 0.95 - params.Intensity * 0.05;
@@ -76,6 +78,11 @@ function setupThree() {
   }
   */
 
+
+  ///// MODEL /////
+  loadGLTF("assets/star.glb");
+
+
   ///// MIRROR /////
   groundMirror = getCircleMirror();
   scene.add(groundMirror);
@@ -118,9 +125,12 @@ function setupThree() {
 
 function updateThree() {
 
-  // starPointCloud = getStarPoints(starScale, STAR_MAX_SCALE); // 此处在setup里加入parameter，update里无法更新
-  // scene.add(starPointCloud);
+  ///// MODEL /////
+  if (model) {
+    model.rotation.y += 0.01;
+  }
 
+  ///// MIRROR /////
   RESOLUTION_SCALE = 0.95 - params.Intensity * 0.07;
   updateReflectionSize();
 
@@ -313,6 +323,7 @@ function updateThree() {
 
   if (inStarsShow == false) {
     // scene.remove(inStarCloud)
+    inStars = [];
     inStarCloud.visible = false;
   } else {
     inStarCloud.visible = true;
@@ -330,12 +341,12 @@ function updateThree() {
 
     if (p.isDone) {
       scene.remove(p);
-      // if (p.geometry) {
-      //   p.geometry.dispose();
-      // }
-      // if (p.material) {
-      //   p.material.dispose();
-      // }
+      if (p.geometry) {
+        p.geometry.dispose();
+      }
+      if (p.material) {
+        p.material.dispose();
+      }
       inStars.splice(i, 1);
     }
   }
@@ -439,6 +450,50 @@ function updateThree() {
 }
 
 
+function loadGLTF(filepath) {
+  // Import GLTFLoader from the Three.js addons before using it.
+  // See index.html for the import setup!
+  const loader = new GLTFLoader();
+
+  loader.load(
+    filepath,
+    function (gltfData) {
+      // add the whole scene
+      model = gltfData.scene;
+      model.scale.setScalar(900);
+
+      let light = new THREE.PointLight("#ffffff", 1, 800, 0.1);
+      light.position.set(0, 0, 0);
+      scene.add(light);
+      model.traverse((child) => {
+        if (child.isMesh) {
+          light.add(child);
+        }
+      })
+      // model.traverse((child) => {
+      //   if (child.isMesh) {
+      //     child.material.emissive = new THREE.Color("#5afcff");
+      //     child.material.emissiveIntensity = 1.5;
+      //   }
+      // });
+
+      // Keep the original materials and textures!
+      scene.add(model);
+    },
+    function (xhr) {
+      // show loading progress
+      if (xhr.total > 0) {
+        console.log(`${(xhr.loaded / xhr.total * 100).toFixed(0)}% loaded`);
+      } else {
+        console.log(`${(xhr.loaded / 1024).toFixed(0)} KB downloaded (total unknown)`);
+      }
+    },
+    function (err) {
+      // report loading errors
+      console.error("couldn't load the model file", err);
+    }
+  );
+}
 
 function updateReflectionSize() {
   // we use ceil() here to ensure the render target size is an integer and greater than zero!
