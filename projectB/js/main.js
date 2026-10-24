@@ -29,6 +29,7 @@ let inStarCloud;
 let inStarsShow = params.starParticlesShow;
 
 let model;
+let modelShow = params.starModelShow;
 
 let groundMirror, ceilingMirror;
 let RESOLUTION_SCALE = 0.95 - params.Intensity * 0.05;
@@ -36,7 +37,8 @@ let RESOLUTION_SCALE = 0.95 - params.Intensity * 0.05;
 
 function setupThree() {
   // scene.add(axesHelper);
-  scene.background = new THREE.Color('#000710');
+  scene.background = new THREE.Color(params.bgColor);
+  // scene.background = new THREE.Color('#000710');
   // scene.background = new THREE.Color('#011128');
   // scene.background = new THREE.Color('#030972');
   // scene.background = new THREE.Color('#0b19fc');
@@ -100,12 +102,13 @@ function setupThree() {
 
   ///// PARTICLES /////
 
-  // let star = new Star();
-  // star.pos.x = 0;
-  // star.pos.y = 0;
-  // star.pos.z = 0;
-  // stars.push(star);
-  // }
+  if (modelShow == false) {
+    let star = new Star();
+    star.pos.x = 0;
+    star.pos.y = 0;
+    star.pos.z = 0;
+    stars.push(star);
+  }
 
   pointCloud = getPoints();
   scene.add(pointCloud);
@@ -129,8 +132,16 @@ function updateThree() {
     model.rotation.y -= 0.015 * (params.Intensity / 4 + 1);
     model.rotation.z -= 0.015 * (params.Intensity / 4 + 1);
 
-    model.position.y = - cos(frame / (100 - params.Intensity * 7.2) * 2) * (100 - params.Intensity * 7);
+    model.position.y = - cos(frame / (100 - params.Intensity * 7.2) * 2) * (100 - params.Intensity * 7) + 5;
+
+    if (modelShow == false) {
+      model.visible = false;
+    } else {
+      model.visible = true;
+    }
+
   }
+
 
   ///// MIRROR /////
   RESOLUTION_SCALE = 0.95 - params.Intensity * 0.07;
@@ -185,13 +196,14 @@ function updateThree() {
     p.xzDis = xzDis
     inParticles.push(p);
   }
-  // if (stars.length < 1) {
-  //   let star = new Star();
-  //   star.pos.x = 0;
-  //   star.pos.y = 0;
-  //   star.pos.z = 0;
-  //   stars.push(star);
-  // }
+  if (stars.length < 1) {
+    let star = new Star();
+    star.pos.x = 0;
+    star.pos.y = 0;
+    star.pos.z = 0;
+    stars.push(star);
+  }
+
   if (inStarsShow == true && inStars.length < MAX_INSTAR_NUMBER && frame % (20 - params.Intensity) == 0) {
     let p = new InStar();
 
@@ -299,6 +311,13 @@ function updateThree() {
     let starPointCloud = getStarPoints(starScale, STAR_MAX_SCALE);
     starPointClouds.push(starPointCloud)
     scene.add(starPointCloud);
+
+    if (modelShow == true) {
+      // scene.remove(inStarCloud)
+      starPointCloud.visible = false;
+    } else {
+      starPointCloud.visible = true;
+    }
 
     let star = new Star();
     stars.push(star);
@@ -417,9 +436,9 @@ function updateThree() {
       starPositionArray[ptIndex + 2] = p.pos.z;
 
 
-      starColorArray[ptIndex + 0] = 1.5 * p.lifespan; // R
-      starColorArray[ptIndex + 1] = 0.6 * p.lifespan; // G
-      starColorArray[ptIndex + 2] = 0.2 * p.lifespan; // B
+      starColorArray[ptIndex + 0] = 0.82 * p.lifespan; // R
+      starColorArray[ptIndex + 1] = 2.52 * p.lifespan; // G
+      starColorArray[ptIndex + 2] = 2.55 * p.lifespan; // B
     }
     //starPointClouds[j].geometry.drawRange.count = params.particleNumber;
     starPointClouds[j].geometry.setDrawRange(0, 5);
@@ -462,7 +481,7 @@ function loadGLTF(filepath) {
     function (gltfData) {
       // add the whole scene
       model = gltfData.scene;
-      model.scale.setScalar(600);
+      model.scale.setScalar(750);
 
       // model.traverse((child) => {
       //   if (child.isMesh) {
@@ -550,7 +569,7 @@ function getStarPoints(starScale, maxScale) {
 
 
   const material = new THREE.PointsMaterial({
-    color: "#5afcff",
+    color: "rgb(82, 252, 255)",
     vertexColors: true,
     size: starScale * maxScale,
     map: texture,
