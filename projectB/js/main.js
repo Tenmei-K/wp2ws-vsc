@@ -100,13 +100,11 @@ function setupThree() {
 
   ///// PARTICLES /////
 
-  // for (let i = 0; i < 1; i++) {
-  let star = new Star();
-  star.pos.x = 0;
-  star.pos.y = 0;
-  star.pos.z = 0;
-  stars.push(star);
-  // star.geometry.scale.needsUpdate = true;
+  // let star = new Star();
+  // star.pos.x = 0;
+  // star.pos.y = 0;
+  // star.pos.z = 0;
+  // stars.push(star);
   // }
 
   pointCloud = getPoints();
@@ -127,7 +125,11 @@ function updateThree() {
 
   ///// MODEL /////
   if (model) {
-    model.rotation.y += 0.01;
+    model.rotation.x += 0.015 * (params.Intensity / 4 + 1);
+    model.rotation.y -= 0.015 * (params.Intensity / 4 + 1);
+    model.rotation.z -= 0.015 * (params.Intensity / 4 + 1);
+
+    model.position.y = - cos(frame / (100 - params.Intensity * 7.2) * 2) * (100 - params.Intensity * 7);
   }
 
   ///// MIRROR /////
@@ -183,13 +185,13 @@ function updateThree() {
     p.xzDis = xzDis
     inParticles.push(p);
   }
-  if (stars.length < 1) {
-    let star = new Star();
-    star.pos.x = 0;
-    star.pos.y = 0;
-    star.pos.z = 0;
-    stars.push(star);
-  }
+  // if (stars.length < 1) {
+  //   let star = new Star();
+  //   star.pos.x = 0;
+  //   star.pos.y = 0;
+  //   star.pos.z = 0;
+  //   stars.push(star);
+  // }
   if (inStarsShow == true && inStars.length < MAX_INSTAR_NUMBER && frame % (20 - params.Intensity) == 0) {
     let p = new InStar();
 
@@ -438,9 +440,9 @@ function updateThree() {
     inStarPositionArray[ptIndex + 2] = p.pos.z;
 
 
-    inStarColorArray[ptIndex + 0] = 1.5 * p.lifespan; // R
-    inStarColorArray[ptIndex + 1] = 0.6 * p.lifespan; // G
-    inStarColorArray[ptIndex + 2] = 0.2 * p.lifespan; // B
+    inStarColorArray[ptIndex + 0] = 2.00 * p.lifespan; // R
+    inStarColorArray[ptIndex + 1] = 2.54 * p.lifespan; // G
+    inStarColorArray[ptIndex + 2] = 2.55 * p.lifespan; // B
 
   }
   inStarCloud.geometry.setDrawRange(0, MAX_INSTAR_NUMBER);
@@ -460,22 +462,22 @@ function loadGLTF(filepath) {
     function (gltfData) {
       // add the whole scene
       model = gltfData.scene;
-      model.scale.setScalar(900);
+      model.scale.setScalar(600);
 
-      let light = new THREE.PointLight("#ffffff", 1, 800, 0.1);
-      light.position.set(0, 0, 0);
-      scene.add(light);
-      model.traverse((child) => {
-        if (child.isMesh) {
-          light.add(child);
-        }
-      })
       // model.traverse((child) => {
       //   if (child.isMesh) {
-      //     child.material.emissive = new THREE.Color("#5afcff");
-      //     child.material.emissiveIntensity = 1.5;
+      //     let light = new THREE.PointLight("#ffffff", 1, 800, 0.1);
+      //     light.position.set(0, 0, 0);
+      //     scene.add(light);
+      //     light.add(child);
       //   }
-      // });
+      // })
+      model.traverse((child) => {
+        if (child.isMesh) {
+          child.material.emissive = new THREE.Color("#52fcff");
+          child.material.emissiveIntensity = 1.5;
+        }
+      });
 
       // Keep the original materials and textures!
       scene.add(model);
@@ -518,9 +520,10 @@ function getInStars() {
 
 
   const material = new THREE.PointsMaterial({
-    color: "#5ec9ca",
+    // color: "rgb(200, 254, 255)",
+    color: ("#8cf8d0"),
     vertexColors: true,
-    size: random(50, 80),
+    size: random(40, 60),
     map: texture,
     depthTest: false,
     blending: THREE.AdditiveBlending,
