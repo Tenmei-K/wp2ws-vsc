@@ -12,9 +12,9 @@ let flyControls;
 function setupThree() {
   // controls
 
-  // controls = new OrbitControls(camera, renderer.domElement);
 
-  /* #1
+  // #1
+  controls = new OrbitControls(camera, renderer.domElement);
   // console.log(controls.getDistance());
   controls.enableDamping = true;
   controls.dampingFactor = 0.05;
@@ -39,7 +39,7 @@ function setupThree() {
     RIGHT: 'KeyD', // right arrow
     BOTTOM: 'KeyS' // down arrow
   }
-  */
+  
 
   // #2
   // controls = new TrackballControls(camera, renderer.domElement);
@@ -53,11 +53,11 @@ function setupThree() {
   // controls = new MapControls(camera, renderer.domElement);
 
   // #7
-  flyControls = new FlyControls(camera, renderer.domElement);
-  flyControls.movementSpeed = 100;
-  flyControls.rollSpeed = 0.5;
-  flyControls.dragToLook = true;
-  flyControls.autoForward = true;
+  // flyControls = new FlyControls(camera, renderer.domElement);
+  // flyControls.movementSpeed = 100;
+  // flyControls.rollSpeed = 0.5;
+  // flyControls.dragToLook = true;
+  // flyControls.autoForward = true;
 
 
 
@@ -138,8 +138,8 @@ function updateThree() {
   timer.update();
   let delta = timer.getDelta();
 
-  // controls.update();
-  flyControls.update(delta);  
+  controls.update();
+  // flyControls.update(delta);  
 
 }
 
