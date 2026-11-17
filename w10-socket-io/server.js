@@ -1,7 +1,7 @@
 // console.log("hi!");
 
 // const http = require("http");
-// import http from "node:http"
+// import http from "node:http" // import is from ES6, suggested
 
 // 2. Terminal: node install express
 import express from "express";
@@ -19,6 +19,7 @@ server.listen(port, hostname, function () {
 });
 
 /* 3. after installing express */
+// app is using express in "public"
 app.use(express.static("public"));
 // app.get("/", function (request, response) {
 //     response.send("hi!");

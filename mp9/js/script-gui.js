@@ -14,6 +14,10 @@ let params = {
 
   resolutionScale: 0.5,
   reflectionSize: "",
+
+  camModel : true,
+  camInside : false,
+  camOutside : false,
 };
 
 
@@ -26,12 +30,12 @@ function setupGUI() {
 
   tab = pane.addTab({
     pages: [
-      { title: 'Operation' },
+      { title: 'Perspective' },
       { title: 'Monitor' },
     ],
   });
 
-  // let tab.pages[1] = pane.addFolder({ title: "Observation", expanded: true });
+  // let folderObservation = pane.addFolder({ title: "Observation", expanded: true });
 
   tab.pages[1].addBinding(params, "fps", {
     label: "FPS",
@@ -69,7 +73,7 @@ function setupGUI() {
   pane.addBlade({ view: "separator" });
 
 
-  // let tab.pages[0] = pane.addFolder({ title: "Operation", expanded: true });
+  // let folderOperation = pane.addFolder({ title: "Operation", expanded: true });
 
   /*
   tab.pages[0].addBinding(params, "bgColor", {
@@ -137,6 +141,20 @@ function setupGUI() {
     params.camModel = true;
     params.camInside = false;
     params.camOutside = false;
+  })
+  tab.pages[0].addButton({
+    title: "Inside",
+  }).on("click", () => {
+    params.camModel = false;
+    params.camInside = true;
+    params.camOutside = false;
+  })
+  tab.pages[0].addButton({
+    title: "Outside",
+  }).on("click", () => {
+    params.camModel = false;
+    params.camInside = false;
+    params.camOutside = true;
   })
 
 }

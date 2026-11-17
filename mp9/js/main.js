@@ -35,6 +35,10 @@ let groundMirror, ceilingMirror;
 let RESOLUTION_SCALE = 0.95 - params.Intensity * 0.05;
 
 
+let controls;
+
+
+
 function setupThree() {
   // scene.add(axesHelper);
   scene.background = new THREE.Color(params.bgColor);
@@ -84,6 +88,51 @@ function setupThree() {
 
 
 function updateThree() {
+
+  ///// CONTROLS & CAMERA /////
+  if (params.camModel == true) {
+    // camera
+    camera.position.x = 0;
+    camera.position.y = - cos(frame / (100 - params.Intensity * 7.2) * 2) * (100 - params.Intensity * 7) + 5;
+    camera.position.z = 0;
+
+    // controls
+    controls = new OrbitControls(camera, renderer.domElement);
+
+    controls.enableRotate = true;
+    controls.enableZoom = true;
+    controls.enablePan = true;
+
+  } else if (params.camInside == true) {
+    // camera
+    camera.position.x = 1400 * sin(frame / 100);
+    camera.position.y = 300 * sin(frame / 50);
+    camera.position.z = 1400 * cos(frame / 100);
+
+    // controls
+    controls = new OrbitControls(camera, renderer.domElement);
+
+    controls.enableRotate = true;
+    controls.enableZoom = true;
+    controls.enablePan = true;
+
+  } else if (params.camOutside == true) {
+    // camera
+    // camera.position.x = 2000;
+    // camera.position.y = - cos(frame / (100 - params.Intensity * 7.2) * 2) * (100 - params.Intensity * 7) + 5;
+    camera.position.z = 0;
+
+    // controls
+    controls = new OrbitControls(camera, renderer.domElement);
+
+    controls.enableRotate = true;
+    controls.enableZoom = true;
+    controls.enablePan = true;
+
+  }
+
+  controls.update();
+
 
   ///// MODEL /////
   if (model) {
